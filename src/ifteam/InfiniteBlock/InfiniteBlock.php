@@ -54,8 +54,10 @@ class InfiniteBlock extends PluginBase implements Listener {
 		foreach ( $index as $item ) {
 			$exploded = explode ( "/", $this->mineSettings ["mine-probability"] [$item] );
 			
-			if (! isset ( $exploded [1] )) continue;
-			if (! is_numeric ( $exploded [0] ) or ! is_numeric ( $exploded [1] )) continue;
+			if (! isset ( $exploded [1] ))
+				continue;
+			if (! is_numeric ( $exploded [0] ) or ! is_numeric ( $exploded [1] ))
+				continue;
 			
 			$sortedIndex [$item] = ( int ) round ( $exploded [1] / $exploded [0] );
 		}
@@ -70,7 +72,9 @@ class InfiniteBlock extends PluginBase implements Listener {
 			} else {
 				$rand = rand ( 1, $this->sortedSettings [$item] );
 			}
-			if ($rand == 1) {return $item;}
+			if ($rand == 1) {
+				return $item;
+			}
 		}
 		return 1;
 	}
@@ -131,7 +135,8 @@ class InfiniteBlock extends PluginBase implements Listener {
 				} else {
 					while ( 1 ) {
 						$checkOverapArea = $this->checkOverlap ( $pos [0], $pos [1], $pos [2], $pos [3], $pos [4], $pos [5] );
-						if ($checkOverapArea == false) break;
+						if ($checkOverapArea == false)
+							break;
 						
 						$this->removeAreaById ( $checkOverapArea ["ID"] );
 						$this->message ( $player, ( int ) $checkOverapArea ["ID"] . $this->get ( "infinite-overlap-area-deleted" ) );
@@ -156,14 +161,15 @@ class InfiniteBlock extends PluginBase implements Listener {
 	}
 	public function onQuit(PlayerQuitEvent $event) {
 		$player = $event->getPlayer ();
-		if (isset ( $this->tictock [$player->getName ()] )) unset ( $this->tictock [$player->getName ()] );
+		if (isset ( $this->tictock [$player->getName ()] ))
+			unset ( $this->tictock [$player->getName ()] );
 	}
 	public function onBreak(BlockBreakEvent $event) {
 		$area = $this->getArea ( $event->getBlock ()->x, $event->getBlock ()->y, $event->getBlock ()->z );
 		if ($area != false) {
 			$time = round ( microtime ( true ) * 1000 );
 			if ($event->getBlock ()->getBreakTime ( $event->getItem () ) > 0.1) {
-				if(isset($this->tictock [$event->getPlayer ()->getName ()])){
+				if (isset ( $this->tictock [$event->getPlayer ()->getName ()] )) {
 					if (($time - $this->tictock [$event->getPlayer ()->getName ()]) <= 100) {
 						$event->setCancelled ();
 						return;
@@ -177,13 +183,13 @@ class InfiniteBlock extends PluginBase implements Listener {
 			$z = $block->z + 0.5;
 			if ($area ["is-mine"] == true) {
 				$drops = $event->getBlock ()->getDrops ( $event->getItem () );
-				 foreach ( $drops as $drop ){
-				 	if($event->getPlayer() instanceof InventoryHolder){
-				 		if($event->getPlayer ()->getInventory () instanceof BaseInventory){
+				foreach ( $drops as $drop ) {
+					if ($event->getPlayer () instanceof InventoryHolder) {
+						if ($event->getPlayer ()->getInventory () instanceof BaseInventory) {
 							if ($drop [2] > 0) $event->getPlayer ()->getInventory ()->addItem ( Item::get (...$drop));
-				 		}
-				 	}
-				 }
+						}
+					}
+				}
 				if ($event->getPlayer ()->hasPermission ( "infinite.VIP" )) {
 					$this->breakQueue ["{$block->x}:{$block->y}:{$block->z}"] = Block::get ( $this->randomMine ( true ) );
 				} else {
@@ -192,11 +198,12 @@ class InfiniteBlock extends PluginBase implements Listener {
 				$this->itemQueue ["{$x}:{$y}:{$z}"] = $drops;
 			} else {
 				$drops = $event->getBlock ()->getDrops ( $event->getItem () );
-				 foreach ( $drops as $drop ){
-				 	if($event->getPlayer() instanceof InventoryHolder)
-				 		if($event->getPlayer ()->getInventory () instanceof BaseInventory)
-							if ($drop [2] > 0) $event->getPlayer ()->getInventory ()->addItem ( Item::get (...$drop));
-				 }
+				foreach ( $drops as $drop ) {
+					if ($event->getPlayer () instanceof InventoryHolder)
+						if ($event->getPlayer ()->getInventory () instanceof BaseInventory)
+							if ($drop [2] > 0)
+								if ($drop [2] > 0) $event->getPlayer ()->getInventory ()->addItem ( Item::get (...$drop));
+				}
 				$this->breakQueue ["{$block->x}:{$block->y}:{$block->z}"] = $block;
 				$this->itemQueue ["{$x}:{$y}:{$z}"] = $drops;
 			}
@@ -204,10 +211,11 @@ class InfiniteBlock extends PluginBase implements Listener {
 	}
 	public function onAir(BlockUpdateEvent $event) {
 		$block = $event->getBlock ();
-		if (isset ( $this->breakQueue ["{$block->x}:{$block->y}:{$block->z}"] )) if ($block->getId () == Block::AIR) {
-			$event->getBlock ()->getLevel ()->setBlock ( $block, $this->breakQueue ["{$block->x}:{$block->y}:{$block->z}"], false, true );
-			unset ( $this->breakQueue ["{$block->x}:{$block->y}:{$block->z}"] );
-		}
+		if (isset ( $this->breakQueue ["{$block->x}:{$block->y}:{$block->z}"] ))
+			if ($block->getId () == Block::AIR) {
+				$event->getBlock ()->getLevel ()->setBlock ( $block, $this->breakQueue ["{$block->x}:{$block->y}:{$block->z}"], false, true );
+				unset ( $this->breakQueue ["{$block->x}:{$block->y}:{$block->z}"] );
+			}
 	}
 	public function onDrops(ItemSpawnEvent $event) {
 		$e = $event->getEntity ();
@@ -221,7 +229,8 @@ class InfiniteBlock extends PluginBase implements Listener {
 				if ($properties->getName () == 'age') {
 					$property = $reflection_class->getProperty ( 'age' );
 					$property->setAccessible ( true );
-					if ($property->getValue ( $event->getEntity () ) == 0) $property->setValue ( $event->getEntity (), 7000 );
+					if ($property->getValue ( $event->getEntity () ) == 0)
+						$property->setValue ( $event->getEntity (), 7000 );
 				}
 			}
 		}
@@ -234,14 +243,16 @@ class InfiniteBlock extends PluginBase implements Listener {
 		$index_key = array_keys ( $target );
 		$full_index = floor ( $index_count / $once_print );
 		
-		if ($index_count > $full_index * $once_print) $full_index ++;
+		if ($index_count > $full_index * $once_print)
+			$full_index ++;
 		
 		if ($index <= $full_index) {
 			$player->sendMessage ( TextFormat::DARK_AQUA . $this->get ( "now-list-show" ) . " ({$index}/{$full_index}) " . $this->get ( "index_count" ) . ": {$index_count}" );
 			$message = null;
 			for($for_i = $once_print; $for_i >= 1; $for_i --) {
 				$now_index = $index * $once_print - $for_i;
-				if (! isset ( $index_key [$now_index] )) break;
+				if (! isset ( $index_key [$now_index] ))
+					break;
 				$now_key = $index_key [$now_index];
 				$message .= TextFormat::DARK_AQUA . "[" . ( int ) $now_key . $this->get ( "arealist-name" ) . "] ";
 			}
@@ -281,7 +292,8 @@ class InfiniteBlock extends PluginBase implements Listener {
 		$commandMap->register ( $fallback, $command );
 	}
 	public function onCommand(CommandSender $player, Command $command, $label, Array $args) {
-		if (! strtolower ( $command->getName () ) == $this->get ( "infinite" )) return;
+		if (! strtolower ( $command->getName () ) == $this->get ( "infinite" ))
+			return;
 		
 		if (! isset ( $args [0] )) {
 			$this->message ( $player, $this->get ( "help-page-add" ) );
@@ -367,14 +379,16 @@ class InfiniteBlock extends PluginBase implements Listener {
 					$this->message ( $player, $this->get ( "is-must-numeric" ) );
 					return;
 				}
-				unset ( $this->mineSettings ["mine-probability"] );
+				if (isset ( $this->mineSettings ["mine-probability"] [( int ) $args [1]] ))
+					unset ( $this->mineSettings ["mine-probability"] [( int ) $args [1]] );
 				$this->mineSort ();
 				$this->message ( $player, $this->get ( "mine-option-del-complete" ) );
 				break;
 			case $this->get ( "infinite-mine-option-list" ) :
 				$list = "";
-				foreach ( $this->mineSettings ["mine-probability"] as $index => $item )
-					$list .= "[ " . $index . $this->get ( "mine-option-item-desc" ) . $item . " ] ";
+				if (isset ( $this->mineSettings ["mine-probability"] ))
+					foreach ( $this->mineSettings ["mine-probability"] as $index => $item )
+						$list .= "[ " . $index . $this->get ( "mine-option-item-desc" ) . $item . " ] ";
 				$this->message ( $player, $list );
 				break;
 			default :
@@ -412,18 +426,37 @@ class InfiniteBlock extends PluginBase implements Listener {
 			$startZ = $endZ;
 			$endZ = $backup;
 		}
-		return [ $startX,$endX,$startY,$endY,$startZ,$endZ ];
+		return [ 
+				$startX,
+				$endX,
+				$startY,
+				$endY,
+				$startZ,
+				$endZ 
+		];
 	}
 	public function checkOverlap($startX, $endX, $startY, $endY, $startZ, $endZ) {
 		foreach ( $this->config_Data as $area ) {
-			if (isset ( $area ["startX"] )) if ((($area ["startX"] <= $startX and $area ["endX"] >= $startX) or ($area ["startX"] <= $endX and $area ["endX"] >= $endX)) and (($area ["startY"] < $startY and $area ["endY"] >= $startY) or ($area ["startY"] < $endY and $area ["endY"] > $endY)) and (($area ["startZ"] < $startZ and $area ["endZ"] > $startZ) or ($area ["endZ"] < $endZ and $area ["endZ"] > $endZ))) return $area;
+			if (isset ( $area ["startX"] ))
+				if ((($area ["startX"] <= $startX and $area ["endX"] >= $startX) or ($area ["startX"] <= $endX and $area ["endX"] >= $endX)) and (($area ["startY"] < $startY and $area ["endY"] >= $startY) or ($area ["startY"] < $endY and $area ["endY"] > $endY)) and (($area ["startZ"] < $startZ and $area ["endZ"] > $startZ) or ($area ["endZ"] < $endZ and $area ["endZ"] > $endZ)))
+					return $area;
 		}
 		return false;
 	}
 	public function addArea($startX, $endX, $startY, $endY, $startZ, $endZ, $ismine = false) {
-		if ($this->checkOverlap ( $startX, $endX, $startY, $endY, $startZ, $endZ ) != false) return false;
+		if ($this->checkOverlap ( $startX, $endX, $startY, $endY, $startZ, $endZ ) != false)
+			return false;
 		
-		$this->config_Data [$this->index] = [ "ID" => $this->index,"is-mine" => $ismine,"startX" => $startX,"endX" => $endX,"startY" => $startY,"endY" => $endY,"startZ" => $startZ,"endZ" => $endZ ];
+		$this->config_Data [$this->index] = [ 
+				"ID" => $this->index,
+				"is-mine" => $ismine,
+				"startX" => $startX,
+				"endX" => $endX,
+				"startY" => $startY,
+				"endY" => $endY,
+				"startZ" => $startZ,
+				"endZ" => $endZ 
+		];
 		return $this->index ++;
 	}
 	public function deleteArea(Player $player, $id = null) {
@@ -444,22 +477,27 @@ class InfiniteBlock extends PluginBase implements Listener {
 		return true;
 	}
 	public function removeAreaById($id) {
-		if (isset ( $this->config_Data [$id] )) unset ( $this->config_Data [$id] );
+		if (isset ( $this->config_Data [$id] ))
+			unset ( $this->config_Data [$id] );
 	}
 	public function getArea($x, $y, $z) {
 		foreach ( $this->config_Data as $area )
-			if (isset ( $area ["startX"] )) if ($area ["startX"] <= $x and $area ["endX"] >= $x and $area ["startY"] <= $y and $area ["endY"] >= $y and $area ["startZ"] <= $z and $area ["endZ"] >= $z) return $area;
+			if (isset ( $area ["startX"] ))
+				if ($area ["startX"] <= $x and $area ["endX"] >= $x and $area ["startY"] <= $y and $area ["endY"] >= $y and $area ["startZ"] <= $z and $area ["endZ"] >= $z)
+					return $area;
 		return false;
 	}
 	public function getAreaById($id) {
 		return isset ( $this->config_Data [$id] ) ? $this->config_Data [$id] : false;
 	}
 	public function message($player, $text = "", $mark = null) {
-		if ($mark == null) $mark = $this->get ( "default-prefix" );
+		if ($mark == null)
+			$mark = $this->get ( "default-prefix" );
 		$player->sendMessage ( TextFormat::DARK_AQUA . $mark . " " . $text );
 	}
 	public function alert($player, $text = "", $mark = null) {
-		if ($mark == null) $mark = $this->get ( "default-prefix" );
+		if ($mark == null)
+			$mark = $this->get ( "default-prefix" );
 		$player->sendMessage ( TextFormat::RED . $mark . " " . $text );
 	}
 }

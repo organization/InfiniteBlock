@@ -1,6 +1,6 @@
 name: InfiniteBlock
 main: ifteam\InfiniteBlock\InfiniteBlock
-version: 0.8-alpha
+version: 0.9-alpha
 author: ifteam
 api: [1.4.1]
 
